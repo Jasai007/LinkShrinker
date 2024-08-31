@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    volumes:
+      - url_data:/data
+    networks:
+      - url_network
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - url_network
+
+networks:
+  url_network:
+    driver: bridge
+
+volumes:
+  url_data:
