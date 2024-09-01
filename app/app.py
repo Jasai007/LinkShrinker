@@ -7,6 +7,7 @@ DATABASE = '/data/urls.db'
 
 # Initialize the SQLite database
 def init_db():
+    """Create the database and the urls table if it doesn't exist."""
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     cursor.execute('''
@@ -21,18 +22,36 @@ def init_db():
 
 # Function to generate a short URL identifier
 def generate_short_url(original_url):
+    """Generate a hash-based short URL identifier for a given original URL."""
     return str(hash(original_url) % 10000)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    """Handle URL shortening requests."""
     if request.method == 'POST':
         original_url = request.form['url']
         short_url = generate_short_url(original_url)
-        
+
+        # Ensure unique short URL
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO urls (original_url, short_url) VALUES (?, ?)', (original_url, short_url))
-        conn.commit()
+
+        try:
+            cursor.execute('INSERT INTO urls (original_url, short_url) VALUES (?, ?)', (original_url, short_url))
+            conn.commit()
+        except sqlite3.IntegrityError:
+            # Handle the case where the short URL already exists
+            cursor.execute('SELECT original_url FROM urls WHERE short_url = ?', (short_url,))
+            existing_url = cursor.fetchone()
+            if existing_url and existing_url[0] == original_url:
+                # If the short URL already exists for the same original URL, reuse it
+                pass
+            else:
+                # Collision: generate a new short URL and insert again
+                short_url = generate_short_url(original_url + str(os.urandom(16)))  # Slightly modify input to get a different hash
+                cursor.execute('INSERT INTO urls (original_url, short_url) VALUES (?, ?)', (original_url, short_url))
+                conn.commit()
+
         conn.close()
 
         return f"Short URL is: <a href='/{short_url}'>/{short_url}</a>"
@@ -47,6 +66,7 @@ def index():
 
 @app.route('/<short_url>')
 def redirect_to_original(short_url):
+    """Redirect to the original URL based on the short URL identifier."""
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     cursor.execute('SELECT original_url FROM urls WHERE short_url = ?', (short_url,))
