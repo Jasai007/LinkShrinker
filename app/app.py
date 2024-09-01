@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, render_template
 import sqlite3
 import os
 
@@ -57,15 +57,9 @@ def index():
         # Get the full URL, including the domain name and protocol
         full_short_url = request.url_root + short_url
 
-        return f"Short URL is: <a href='{full_short_url}'>{full_short_url}</a>"
+        return render_template('index.html', short_url=full_short_url)
     
-    return '''
-        <form method="post">
-            <label for="url">Enter URL:</label>
-            <input type="text" id="url" name="url" required>
-            <button type="submit">Shorten</button>
-        </form>
-    '''
+    return render_template('index.html')
 
 @app.route('/<short_url>')
 def redirect_to_original(short_url):
