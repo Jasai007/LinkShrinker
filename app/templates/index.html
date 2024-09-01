@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>URL Shortener</h1>
+        <form method="post">
+            <label for="url">Enter URL:</label>
+            <input type="text" id="url" name="url" required>
+            <button type="submit">Shorten</button>
+        </form>
+        {% if short_url %}
+        <div class="short-url-container">
+            <p>Short URL:</p>
+            <input type="text" id="short-url" value="{{ short_url }}" readonly>
+            <button id="copy-btn">Copy</button>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        const copyBtn = document.getElementById('copy-btn');
+        const shortUrlInput = document.getElementById('short-url');
+
+        copyBtn.addEventListener('click', () => {
+            shortUrlInput.select();
+            document.execCommand('copy');
+            alert('Short URL copied to clipboard!');
+        });
+    </script>
+</body>
+</html>
