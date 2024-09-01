@@ -54,7 +54,10 @@ def index():
 
         conn.close()
 
-        return f"Short URL is: <a href='/{short_url}'>/{short_url}</a>"
+        # Get the full URL, including the domain name and protocol
+        full_short_url = request.url_root + short_url
+
+        return f"Short URL is: <a href='{full_short_url}'>{full_short_url}</a>"
     
     return '''
         <form method="post">
