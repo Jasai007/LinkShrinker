@@ -11,4 +11,4 @@ This project consists of a Flask web application that takes a long URL as input 
 
 * Nginx: Acts as a reverse proxy, routing incoming requests to the Flask application
 
-Check the blog for detailed Step-by-Step Process explaination - https://jasaiblogs.hashnode.dev/how-to-use-docker-volumes-and-networks-in-a-project
+<a href="https://jasaiblogs.hashnode.dev/how-to-use-docker-volumes-and-networks-in-a-project"> Check the blog for detailed Step-by-Step Process explaination </a>
